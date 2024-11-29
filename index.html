@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Simple avec Scroll Smooth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Styles pour la modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal iframe {
+            width: 80%;
+            height: 80%;
+        }
+        .modal .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <main class="w-full h-screen">
+    <!-- Barre de navigation -->
+    <header id="main-header" class="bg-transparent z-50 fixed top-0 w-full transition-colors duration-300">
+        <nav id="main-nav" class="max-w-5xl mx-auto font-poppins p-6 flex items-center justify-between">
+            <a href="#motion" class="flex" aria-label="Goût de Saisons">
+                <img src="https://static.vecteezy.com/system/resources/previews/022/825/550/non_2x/peach-fruit-peach-on-transparent-background-png.png" class="hidden md:w-7 md:inline md:mr-4" alt=""/>
+                <span id="site-title" class="text-white text-lg lg:text-xl">
+                    Goût de Saisons
+                </span>
+            </a>
+            <ul id="menu" class="list-none flex space-x-5 ml-auto">
+                <li><a href="#motion" class="nav-link text-white px-4 py-2 rounded-lg hover:bg-sky-50 hover:text-black transition duration-300">Motion Design</a></li>
+                <li><a href="#equipe" class="nav-link text-white px-4 py-2 rounded-lg hover:bg-sky-50 hover:text-black transition duration-300">Équipe</a></li>
+                <li><a href="#biblio" class="nav-link text-white px-4 py-2 rounded-lg hover:bg-sky-50 hover:text-black transition duration-300">Bibliographie</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Section Motion Design avec vidéo de fond -->
+    <section id="motion" class="relative h-screen flex justify-center items-center bg-gray-50">
+        <!-- Vidéo de fond (vidéo locale, sans contrôles) -->
+        <video id="backgroundVideo" class="absolute top-0 left-0 w-full h-full object-cover" autoplay muted loop>
+            <source src="/arrière-plan-animer.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas la vidéo.
+        </video>
+
+        <!-- Superposition noire semi-transparente pour améliorer le contraste -->
+        <div class="absolute top-0 left-0 w-full h-full bg-black opacity-50 z-0"></div>
+
+        <!-- Contenu centré sur l'axe vertical et horizontal -->
+        <div class="relative z-10 text-center text-white">
+            <h1 class="text-4xl font-semibold mb-6">Goût de Saisons</h1>
+            <p class="text-xl mb-12">Découvrez notre projet !</p>
+            <button class="bg-blue-500 text-white py-2 px-6 rounded-full text-lg" id="openModalBtn">Voir le Motion Design</button>
+        </div>
+    </section>
+
+        <!-- Modal pour visionner la vidéo -->
+        <div class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50" id="videoModal" style="display: none;">
+            <div class="relative w-full max-w-7xl aspect-video">
+                <iframe id="videoFrame" class="w-full h-full object-cover rounded-lg" 
+                    src="https://www.youtube.com/embed/Ej-4gPxwvFw?si=ddLHvFpOpmZa8wgx" frameborder="0" 
+                    allow="autoplay; encrypted-media" allowfullscreen>
+                </iframe>
+            </div>
+            <span class="absolute top-5 right-5 text-white text-2xl cursor-pointer" id="closeModalBtn">&times;</span>
+        </div>
+
+        <script>
+            // Fonction pour ouvrir la modal
+            document.getElementById('openModalBtn').addEventListener('click', function() {
+                const modal = document.getElementById('videoModal');
+                const videoFrame = document.getElementById('videoFrame');
+                
+                // Ouvre la modal
+                modal.style.display = 'flex';
+
+                // Modifier l'URL de l'iframe pour activer l'autoplay
+                const videoSrc = videoFrame.src.split("?")[0];  // Enlever les paramètres existants
+                videoFrame.src = `${videoSrc}?autoplay=1`;  // Ajouter autoplay à chaque ouverture
+
+                // Arrête la vidéo de fond (si nécessaire)
+                if (typeof backgroundVideo !== 'undefined') {
+                    backgroundVideo.pause();
+                }
+            });
+
+            // Fonction pour fermer la modal
+            document.getElementById('closeModalBtn').addEventListener('click', function() {
+                const modal = document.getElementById('videoModal');
+                const videoFrame = document.getElementById('videoFrame');
+                
+                // Cache la modal
+                modal.style.display = 'none';
+
+                // Arrêter la vidéo en réinitialisant l'iframe (supprimer le paramètre autoplay)
+                const videoSrc = videoFrame.src.split("?")[0];  // Enlever les paramètres d'URL
+                videoFrame.src = videoSrc;  // Remettre l'URL de base sans autoplay
+
+                // Relance la vidéo de fond (si nécessaire)
+                if (typeof backgroundVideo !== 'undefined') {
+                    backgroundVideo.play();
+                }
+            });
+
+            // Fermer la modal si on clique en dehors de l'iframe
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('videoModal');
+                const videoFrame = document.getElementById('videoFrame');
+                
+                if (event.target === modal) {
+                    // Cache la modal
+                    modal.style.display = 'none';
+
+                    // Arrêter la vidéo en réinitialisant l'iframe
+                    const videoSrc = videoFrame.src.split("?")[0];  // Enlever les paramètres d'URL
+                    videoFrame.src = videoSrc;  // Remettre l'URL de base sans autoplay
+
+                    // Relance la vidéo de fond (si nécessaire)
+                    if (typeof backgroundVideo !== 'undefined') {
+                        backgroundVideo.play();
+                    }
+                }
+            });
+
+            // Fonction pour changer la couleur du menu en fonction du scroll
+            window.addEventListener('scroll', function() {
+                const header = document.getElementById('main-header');
+                const menuLinks = document.querySelectorAll('.nav-link');
+                const siteTitle = document.getElementById('site-title');
+
+                // Vérifie la position de défilement pour changer la couleur
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-white');  // Fond blanc pour la barre de navigation
+                    header.classList.add('shadow-md');  // Ombre pour contraste
+                    siteTitle.classList.add('text-black'); // Titre en noir
+                    menuLinks.forEach(link => link.classList.add('text-black'));  // Liens en noir
+                } else {
+                    header.classList.remove('bg-white');
+                    header.classList.remove('shadow-md');
+                    siteTitle.classList.remove('text-black');
+                    menuLinks.forEach(link => link.classList.remove('text-black'));
+                    menuLinks.forEach(link => link.classList.add('text-white')); // Liens en blanc
+                }
+            });
+        </script>
+
+
+</main>
+
+<section id="equipe" class="py-20 bg-gray-50 h-screen flex justify-center items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-semibold text-center text-gray-800 mb-12">Notre équipe</h2>
+        <h2 class="text-2xl text-center text-gray-400 mb-12">Nous nous sommes répartie les tâches par saisons.</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+            <!-- Membre 1 -->
+            <div class="anim bg-white p-8 rounded-lg shadow-lg transform opacity-0 translate-x-16 transition-all duration-700">
+                <img src="https://mir-s3-cdn-cf.behance.net/user/115/4100af1504964617.6659905fceebc.png" alt="Pierre" class="w-40 h-40 object-cover rounded-full mx-auto mb-6">
+                <h3 class="text-2xl font-semibold text-center text-gray-800">Benoît</h3>
+                <p class="text-center text-gray-500 text-lg">Automne</p>
+            </div>
+
+            <!-- Membre 2 -->
+            <div class="anim bg-white p-8 rounded-lg shadow-lg transform opacity-0 translate-x-16 transition-all duration-700">
+                <img src="https://mir-s3-cdn-cf.behance.net/user/115/03f36c1831132875.66599bd4a0a47.png" alt="Lenddy" class="w-40 h-40 object-cover rounded-full mx-auto mb-6">
+                <h3 class="text-2xl font-semibold text-center text-gray-800">Lenddy</h3>
+                <p class="text-center text-gray-500 text-lg">Hiver</p>
+            </div>
+
+            <!-- Membre 3 -->
+            <div class="anim bg-white p-8 rounded-lg shadow-lg transform opacity-0 translate-x-16 transition-all duration-700">
+                <img src="https://mir-s3-cdn-cf.behance.net/user/115/5202ed1830753453.6659b18577ce7.png" alt="Sonia" class="w-40 h-40 object-cover rounded-full mx-auto mb-6">
+                <h3 class="text-2xl font-semibold text-center text-gray-800">Sonia</h3>
+                <p class="text-center text-gray-500 text-lg">Printemps</p>
+            </div>
+
+            <!-- Membre 4 -->
+            <div class="anim bg-white p-8 rounded-lg shadow-lg transform opacity-0 translate-x-16 transition-all duration-700">
+                <img src="https://mir-s3-cdn-cf.behance.net/user/115/c65de81391990687.665f08083abe0.png" alt="Sia" class="w-40 h-40 object-cover rounded-full mx-auto mb-6">
+                <h3 class="text-2xl font-semibold text-center text-gray-800">Sia</h3>
+                <p class="text-center text-gray-500 text-lg">Été</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Ajoute les classes pour animer l'apparition
+                entry.target.classList.remove('opacity-0', 'translate-x-16');
+                entry.target.classList.add('opacity-100', 'translate-x-0');
+                observer.unobserve(entry.target); // On arrête d'observer une fois l'élément visible
+            }
+        });
+    }, {
+        threshold: 0.5  // Déclenche l'animation quand 50% de l'élément est visible
+    });
+
+    // Observer chaque membre de l'équipe
+    const anim = document.querySelectorAll('.anim');
+    anim.forEach(member => observer.observe(member));
+});
+</script>
+
+
+                <section id="biblio" class="py-20 bg-gray-50 h-screen flex justify-center items-center">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h1 class="text-4xl font-semibold text-center text-gray-800 mb-6">Bibliographie</h1>
+                        <p class="text-xl text-center text-gray-600 mb-12">Vous trouverez ci-dessous toutes nos sources</p>
+
+                        <!-- Grid Container with 2 columns -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 anim">
+
+                            <!-- Référence 1 -->
+                            <div class="bg-white p-8 rounded-lg shadow-lg">
+                                <h3 class="text-2xl font-semibold text-gray-800">Pexel</h3>
+                                <p class="text-lg text-gray-600 flex justify-between">
+                                    Images libres de droits et gratuites.
+                                    <a href="https://www.pexels.com/fr-fr/" target="_blank" class="text-blue-500 hover:underline flex items-center ml-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                                        </svg>
+                                    </a>
+                                </p>
+                            </div>
+
+                            <!-- Référence 2 -->
+                            <div class="bg-white p-8 rounded-lg shadow-lg">
+                                <h3 class="text-2xl font-semibold text-gray-800">Pixabay</h3>
+                                <p class="text-lg text-gray-600 flex justify-between">
+                                    Images libres de droits et gratuites.
+                                    <a href="https://pixabay.com/fr/" target="_blank" class="text-blue-500 hover:underline flex items-center ml-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                                        </svg>
+                                    </a>
+                                </p>
+                            </div>
+                            <!-- Référence 3 -->
+                            <div class="bg-white p-8 rounded-lg shadow-lg">
+                                <h3 class="text-2xl font-semibold text-gray-800">Freesound</h3>
+                                    <p class="text-lg text-gray-600 flex justify-between"> <!-- Utilisation de flex et items-center pour aligner l'icône avec le texte -->
+                                        Sons gratuits / Creative Commons.
+                                        <a href="https://freesound.org/" target="_blank" class="text-blue-500 hover:underline flex items-center ml-2"> <!-- Ajout d'un ml-2 pour l'espace -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <!-- Taille du SVG ajustée avec w-6 et h-6 -->
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                                            </svg> 
+                                        </a>  
+                                    </p>
+                            </div>
+                            <!-- Référence 4 -->
+                            <div class="bg-white p-8 rounded-lg shadow-lg">
+                                <h3 class="text-2xl font-semibold text-gray-800">Unsplash</h3>
+                                    <p class="text-lg text-gray-600 flex justify-between"> <!-- Utilisation de flex et items-center pour aligner l'icône avec le texte -->
+                                        Images libres de droits et gratuites.
+                                        <a href="https://unsplash.com/fr" target="_blank" class="text-blue-500 hover:underline flex items-center ml-2"> <!-- Ajout d'un ml-2 pour l'espace -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <!-- Taille du SVG ajustée avec w-6 et h-6 -->
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                                            </svg> 
+                                        </a>  
+                                    </p>
+                            </div>
+
+                            <div class="space-y-8">
+                                <!-- Référence 5 -->
+                                <div class="bg-white p-8 rounded-lg shadow-lg">
+                                    <h3 class="text-2xl font-semibold text-gray-800">Database Fruit</h3>
+                                        <p class="text-lg text-gray-600 flex justify-between"> <!-- Utilisation de flex et items-center pour aligner l'icône avec le texte -->
+                                            Base de donnée des fruits choisis pour le projet.
+                                            <a href="https://github.com/DanYellow/cours/blob/main/integration-web-s3/sae-303/datasets/crea/fruits-legumes-saisons.xlsx" target="_blank" class="text-blue-500 hover:underline flex items-center ml-2"> <!-- Ajout d'un ml-2 pour l'espace -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <!-- Taille du SVG ajustée avec w-6 et h-6 -->
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                                                </svg> 
+                                            </a>
+                                        </p>
+                                            <a class="flex justify-end mt-8" href="" download="fruits-legumes-saisons.xlsx"> Télécharger
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                                </svg>
+                                            </a>
+                                        
+                                </div>
+
+                    </div>
+                </div>
+               
+                </div>
+            </div>
+        </section>
+    
+        <footer class="relative bg-cover bg-center" style="background-image: url('/Bannière-02-01.png');">
+            <!-- Overlay pour assombrir l'image et rendre le texte lisible -->
+            <div class="absolute inset-0 bg-black opacity-60"></div>
+        
+            <!-- Contenu du footer -->
+            <div class="max-w-7xl xl:mx-40 sm:mx-10 py-12 relative z-10">
+                <div class="text-left text-white">
+                    <!-- Texte Creative Commons -->
+                    <p class="text-xl font-semibold">
+                        © 2024 Goût de Saisons.
+                    </p>
+                </div>
+            </div>
+        </footer>
+        
+        
+
+</main>
+</body>
+</html>

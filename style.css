@@ -1,0 +1,107 @@
+
+        /* Style de base */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Style pour le menu */
+        nav {
+            background-color:beige;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: rgb(92, 83, 83);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px;
+            display: inline-block;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(141, 141, 141, 0.438);
+            border-radius: 10rem;
+        }
+
+        /* Pour faire défiler le contenu sous le menu fixe */
+        section {
+            padding-top: 60px; /* Décalage pour ne pas que le menu cache le contenu */
+            padding: 100px 20px;
+            min-height: 100rem; /* Hauteur minimale d'une section */
+        }
+
+        /* Couleur et style des différentes sections */
+
+
+        /* Animation de scroll smooth */
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+                /* Conteneur Flexbox */
+                .flex-container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 20px;
+                    padding-top: 8rem;
+                }
+        
+                /* Style des carrés */
+                .carre {
+                    width: 20rem;
+                    height: 20em;
+                    background-color: #fff;
+                    border-radius: 15px;
+                    display: flex;
+                    margin: 2rem;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                    text-align: center;
+                }
+        
+                /* Image de fleurs en forme de cercle */
+                .carre img {
+                    width: 10rem;
+                    height: 10rem;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    margin-bottom: 10px;
+                }
+        
+                /* Style du nom */
+                .carre h3 {
+                    font-size: 18px;
+                    color: #333;
+                    margin: 0;
+                }
+        
+                /* Flexbox Responsif : ajuster la taille des carrés en fonction de l'écran */
+                @media (max-width: 768px) {
+                    .carre {
+                        width: 150px;
+                        height: 150px;
+                    }
+                }
